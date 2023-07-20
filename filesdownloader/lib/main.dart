@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 void main(){
   runApp(const MyDownloader());
@@ -13,10 +17,58 @@ class MyDownloader extends StatefulWidget {
 
 class _MyDownloaderState extends State<MyDownloader> {
   // variables
-  double _progress = 50.0;
+  double _progress = 0.0;
   bool _downloading = false;
+  bool _downloadCompleted=false;
   final TextEditingController _downloadURL = TextEditingController();
-  
+  // get path to download
+
+  Future<String> getFilePath(filename) async{
+    String path='';
+    Directory dir = await getApplicationDocumentsDirectory();
+    path = '${dir.path}/$filename';
+    print(path);
+    return path;
+  }
+
+  Future<void> startDownload() async{
+
+    String savePath= await getFilePath("sample.pdf");
+    Dio dio = Dio();
+
+    dio.download(
+        _downloadURL.text,
+        savePath,
+      onReceiveProgress: (receive,total) {
+        setState(() {
+          _progress = (receive / total )* 100;
+          if(_progress>0){
+            _downloading=true;
+            _downloadCompleted=false;
+          }
+          if(_progress==100.0){
+            _progress=0;
+            _downloading=false;
+            _downloadCompleted=true;
+          }
+        });
+      },
+      deleteOnError: true,
+      cancelToken: cancel
+    );
+
+  }
+
+  CancelToken cancel = CancelToken();
+
+  Future<void> cancelDownload() async{
+    cancel.cancel();
+    setState(() {
+      _progress=0;
+      // _downloading=false;
+      _downloadCompleted=false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +97,7 @@ class _MyDownloaderState extends State<MyDownloader> {
                 ),
                 if(_downloading)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 2),
                     child: SizedBox(
                       child: Column(
                         children: [
@@ -55,10 +107,15 @@ class _MyDownloaderState extends State<MyDownloader> {
                             color: Colors.green,
                             minHeight: 5,
                       ),
-                          Text("Downloaded: $_progress%/100%")
+                          Text("Downloaded: ${_progress.toStringAsFixed(2)}%/100%")
                         ],
                       ),
                     ),
+                  ),
+                if(_downloadCompleted)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 2),
+                    child: Text("Download Completed Successfully"),
                   ),
                 Row(
                   children: [
