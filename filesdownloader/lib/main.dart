@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 
 void main(){
@@ -21,41 +22,50 @@ class _MyDownloaderState extends State<MyDownloader> {
   bool _downloading = false;
   bool _downloadCompleted=false;
   final TextEditingController _downloadURL = TextEditingController();
-  // get path to download
+  late String _downloadStatus='';
 
-  Future<String> getFilePath(filename) async{
+  // get path to download
+  Future<String> getFilePath() async{
     String path='';
     Directory dir = await getApplicationDocumentsDirectory();
-    path = '${dir.path}/$filename';
-    print(path);
+    path = dir.path;
     return path;
   }
 
   Future<void> startDownload() async{
 
-    String savePath= await getFilePath("sample.pdf");
+    String savePath= await getFilePath();
     Dio dio = Dio();
+    const url = 'https://freetestdata.com/wp-content/uploads/2022/11/Free_Test_Data_10.5MB_PDF.pdf';
 
-    dio.download(
-        _downloadURL.text,
-        savePath,
-      onReceiveProgress: (receive,total) {
-        setState(() {
-          _progress = (receive / total )* 100;
-          if(_progress>0){
-            _downloading=true;
-            _downloadCompleted=false;
-          }
-          if(_progress==100.0){
-            _progress=0;
-            _downloading=false;
-            _downloadCompleted=true;
-          }
-        });
-      },
-      deleteOnError: true,
-      cancelToken: cancel
-    );
+    final File file=File(url);
+    final filename=basename(file.path);
+
+    try{
+      await dio.download(
+          url,
+          '$savePath/$filename',
+          onReceiveProgress: (receive,total) {
+            setState(() {
+              _progress = (receive / total )* 100;
+              if(_progress>0){
+                _downloading=true;
+                _downloadCompleted=false;
+              }
+              if(_progress==100.0){
+                _progress=0;
+                _downloading=false;
+                _downloadCompleted=true;
+                _downloadStatus='Download Completed Successfully';
+              }
+            });
+          },
+          deleteOnError: true,
+          cancelToken: cancel
+      );
+    } on DioException catch(e){
+      _downloadStatus='$e';
+    }
 
   }
 
@@ -65,7 +75,7 @@ class _MyDownloaderState extends State<MyDownloader> {
     cancel.cancel();
     setState(() {
       _progress=0;
-      // _downloading=false;
+      _downloading=false;
       _downloadCompleted=false;
     });
   }
@@ -113,9 +123,9 @@ class _MyDownloaderState extends State<MyDownloader> {
                     ),
                   ),
                 if(_downloadCompleted)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 2),
-                    child: Text("Download Completed Successfully"),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 2),
+                    child: Text(_downloadStatus),
                   ),
                 Row(
                   children: [
