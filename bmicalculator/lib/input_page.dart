@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'custom_widgets.dart';
+import 'constants.dart';
 
-const containerCardColor = Color(0xFF1D1E33);
+enum Gender {male,female}
 
 class InputPage extends StatefulWidget {
   const InputPage({super.key});
@@ -11,6 +13,10 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
+  Gender? selectedGender;
+  int currentHeightValue = 80;
+  int currentWeightValue = 52;
+  int currentAgeValue = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +26,20 @@ class _InputPageState extends State<InputPage> {
         centerTitle: true,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
          Expanded(
            child: Row(
              children: [
                Expanded(
                  child:  ReusableCard(
-                   cardColor: containerCardColor,
-                   cardChild: IconContent(
+                   onPress: (){
+                     setState(() {
+                       selectedGender = Gender.male;
+                     });
+                   },
+                   cardColor: selectedGender == Gender.male ? zActiveCardColor : zInactiveCardColor,
+                   cardChild: const IconContent(
                      gender: "Male",
                      genderIcons: FontAwesomeIcons.mars,
                    ),
@@ -35,8 +47,13 @@ class _InputPageState extends State<InputPage> {
                ),
                Expanded(
                  child:  ReusableCard(
-                   cardColor: containerCardColor,
-                   cardChild: IconContent(
+                   onPress: (){
+                     setState(() {
+                       selectedGender = Gender.female;
+                     });
+                   },
+                   cardColor: selectedGender == Gender.female ? zActiveCardColor : zInactiveCardColor,
+                   cardChild: const IconContent(
                      gender: "Female",
                      genderIcons: FontAwesomeIcons.venus,
                    ),
@@ -45,27 +62,146 @@ class _InputPageState extends State<InputPage> {
              ],
            ),
          ),
-          const Expanded(
+          Expanded(
             child: ReusableCard(
-                cardColor: containerCardColor,
-              cardChild: Text(" "),
+              onPress: (){},
+                cardColor: zActiveCardColor,
+              cardChild: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "HEIGHT",
+                    style: zLabelTextStyle,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        currentHeightValue.toString(),
+                        style: zNumberTextStyle,
+                      ),
+                      const Text(
+                          "cm",
+                        style: zLabelTextStyle,
+                      )
+                    ],
+                  ),
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.white70,
+                      inactiveTrackColor: const Color(0xFF8D8E98),
+                      thumbColor: const Color(0xFFEB1555),
+                      overlayColor: const Color(0x29EB1555) ,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 12.0
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 30.0
+                      )
+                    ),
+                    child: Slider(
+                      value: currentHeightValue.toDouble(),
+                      min: 50.0,
+                      max: 250.0,
+                      onChanged: (double newHeightValue){
+                        setState(() {
+                          currentHeightValue = newHeightValue.toInt();
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
             )
           ),
-          const Expanded(
+          Expanded(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
                     child:  ReusableCard(
-                      cardColor: containerCardColor,
-                      cardChild: Text(""),
+                      onPress: (){},
+                      cardColor: zActiveCardColor,
+                      cardChild: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "WEIGHT",
+                            style: zLabelTextStyle,
+                          ),
+                          Text(
+                            currentWeightValue.toString(),
+                            style: zNumberTextStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.minus,
+                                onPress: (){
+                                  setState(() {
+                                    currentWeightValue--;
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 20,),
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.plus,
+                                onPress: (){
+                                  setState(() {
+                                    currentWeightValue++;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     )
                   ),
                   Expanded(
-                    child: ReusableCard(
-                      cardColor: containerCardColor,
-                      cardChild: Text(""),
-                    )
-                  )
+                      child:  ReusableCard(
+                        onPress: (){},
+                        cardColor: zActiveCardColor,
+                        cardChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Age",
+                              style: zLabelTextStyle,
+                            ),
+                            Text(
+                              currentAgeValue.toString(),
+                              style: zNumberTextStyle,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RoundIconButton(
+                                  icon: FontAwesomeIcons.minus,
+                                  onPress: (){
+                                    setState(() {
+                                      currentAgeValue--;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(width: 20,),
+                                RoundIconButton(
+                                  icon: FontAwesomeIcons.plus,
+                                  onPress: (){
+                                    setState(() {
+                                      currentAgeValue++;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                  ),
                 ],
               )
           ),
@@ -74,60 +210,12 @@ class _InputPageState extends State<InputPage> {
             width: double.infinity,
             height: 70,
             decoration: const BoxDecoration(
-              color: Color(0xFFEB1555),
+              color: zBottomCardColor,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8) ,topRight: Radius.circular(8))
             ),
           )
         ],
       )
-    );
-  }
-}
-
-class ReusableCard extends StatelessWidget {
-  final Color cardColor;
-  final Widget cardChild;
-
-  const ReusableCard({required this.cardChild, required this.cardColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(10)
-      ),
-      child: cardChild,
-    );
-  }
-}
-
-class IconContent extends StatelessWidget {
-  final IconData genderIcons;
-  late String gender;
-
-  IconContent({super.key,required this.genderIcons,required this.gender});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          genderIcons,
-          size: 80,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Text(
-          gender,
-          style: const TextStyle(
-              fontSize: 20
-          ),
-        )
-      ],
     );
   }
 }
