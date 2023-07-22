@@ -74,3 +74,32 @@ class RoundIconButton extends StatelessWidget {
     );
   }
 }
+
+class BottomButton extends StatelessWidget {
+  final VoidCallback onPress;
+  late String text;
+
+  BottomButton({super.key, required this.onPress, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return  GestureDetector(
+      onTap: onPress,
+      child: Container(
+        margin: const EdgeInsets.only(top:6),
+        width: double.infinity,
+        height: 70,
+        decoration: const BoxDecoration(
+            color: zBottomCardColor,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(8) ,topRight: Radius.circular(8))
+        ),
+        child: Center(
+          child: Text(
+              text,
+              style: zBottomLargeButtonTextStyle
+          ),
+        ),
+      ),
+    );
+  }
+}

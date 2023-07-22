@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'custom_widgets.dart';
 import 'constants.dart';
+import 'bmi_calculator_brain.dart';
 
 enum Gender {male,female}
 
@@ -14,9 +15,9 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Gender? selectedGender;
-  int currentHeightValue = 80;
-  int currentWeightValue = 52;
-  int currentAgeValue = 12;
+  int currentHeightValue = 150;
+  int currentWeightValue = 55;
+  int currentAgeValue = 20;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class _InputPageState extends State<InputPage> {
                    },
                    cardColor: selectedGender == Gender.male ? zActiveCardColor : zInactiveCardColor,
                    cardChild: const IconContent(
-                     gender: "Male",
+                     gender: "MALE",
                      genderIcons: FontAwesomeIcons.mars,
                    ),
                  )
@@ -54,7 +55,7 @@ class _InputPageState extends State<InputPage> {
                    },
                    cardColor: selectedGender == Gender.female ? zActiveCardColor : zInactiveCardColor,
                    cardChild: const IconContent(
-                     gender: "Female",
+                     gender: "FEMALE",
                      genderIcons: FontAwesomeIcons.venus,
                    ),
                  )
@@ -131,9 +132,20 @@ class _InputPageState extends State<InputPage> {
                             "WEIGHT",
                             style: zLabelTextStyle,
                           ),
-                          Text(
-                            currentWeightValue.toString(),
-                            style: zNumberTextStyle,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                currentWeightValue.toString(),
+                                style: zNumberTextStyle,
+                              ),
+                              const Text(
+                                "Kg",
+                                style: zLabelTextStyle,
+                              ),
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -172,9 +184,20 @@ class _InputPageState extends State<InputPage> {
                               "Age",
                               style: zLabelTextStyle,
                             ),
-                            Text(
-                              currentAgeValue.toString(),
-                              style: zNumberTextStyle,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  currentAgeValue.toString(),
+                                  style: zNumberTextStyle,
+                                ),
+                                const Text(
+                                  "yr",
+                                  style: zLabelTextStyle,
+                                ),
+                              ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -205,14 +228,17 @@ class _InputPageState extends State<InputPage> {
                 ],
               )
           ),
-          Container(
-            margin: const EdgeInsets.only(top:6),
-            width: double.infinity,
-            height: 70,
-            decoration: const BoxDecoration(
-              color: zBottomCardColor,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8) ,topRight: Radius.circular(8))
-            ),
+          BottomButton(
+            text: "CALCULATE BMI",
+            onPress: (){
+              BmiCalculator calc = BmiCalculator(weight: currentWeightValue, height: currentHeightValue);
+              Map<String,String> data ={
+                "BMI" : calc.calculateBmi(),
+                "Result" : calc.getResult(),
+                "Interpretation" : calc.getInterpretation()
+              };
+              Navigator.pushNamed(context, '/result',arguments: data);
+            },
           )
         ],
       )
