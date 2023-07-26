@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1063936846271",
+    "project_id": "xflashchat",
+    "storage_bucket": "xflashchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063936846271:android:0865c04cac915638dc990a",
+        "android_client_info": {
+          "package_name": "com.example.xflashchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063936846271-cheabckbk5413meeemube99p2q6lqcmp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCidJHK0LaW3SJDeVWvv12HOBMVc22pH5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1063936846271-cheabckbk5413meeemube99p2q6lqcmp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
