@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'task_model.dart';
+import 'dart:collection';
 
 class TaskData extends ChangeNotifier{
-  List<Task> _tasks= [
-    Task(task: "task 1"),
-    Task(task: "task 2")
-  ];
+  final List<Task> _tasks= [];
 
-  List<Task> get tasks{
-    return _tasks;
+  UnmodifiableListView<Task> get tasks{
+    return UnmodifiableListView(_tasks);
   }
 
   int get taskCount{
@@ -16,8 +14,18 @@ class TaskData extends ChangeNotifier{
   }
 
   void addTask(String taskText){
-    final task = Task(task: taskText);
+    final task = Task(taskTitle: taskText);
     _tasks.add(task);
+    notifyListeners();
+  }
+
+  void updateTask(Task task){
+    task.toggle();
+    notifyListeners();
+  }
+
+  void deleteTask(Task task){
+    _tasks.remove(task);
     notifyListeners();
   }
 }

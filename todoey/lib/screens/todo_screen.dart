@@ -51,7 +51,7 @@ class TodosScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10,),
                 Text(
-                  "${context.read<TaskData>().taskCount} Tasks",
+                  "${context.watch<TaskData>().taskCount} Tasks",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18
